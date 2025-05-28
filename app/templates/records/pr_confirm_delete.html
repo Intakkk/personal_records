@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}Supprimer PR{% endblock %}
+
+{% block content %}
+<h2>Supprimer le PR</h2>
+
+<p>Es-tu sûr de vouloir supprimer ce record : <strong>{{ object.title }}</strong> ({{ object.value }} {{ object.unit }}) ?</p>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Oui, supprimer</button>
+    <a href="{% url 'pr-list' %}" class="btn btn-secondary">Non, retour</a>
+</form>
+{% endblock %}

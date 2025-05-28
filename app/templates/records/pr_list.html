@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Mes PRs{% endblock %}
+
+{% block content %}
+<h2>Mes Personal Records</h2>
+
+<a href="{% url 'pr-add' %}" class="btn btn-success mb-3">➕ Ajouter un PR</a>
+
+{% if records %}
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Exercice</th>
+                <th>Valeur</th>
+                <th>Date</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in records %}
+                <tr>
+                    <td>{{ record.title }}</td>
+                    <td>{{ record.value }} {{ record.unit }}</td>
+                    <td>{{ record.date }}</td>
+                    <td>
+                        <a href="{% url 'pr-delete' record.pk %}" class="btn btn-sm btn-danger">🗑️ Supprimer</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>Tu n’as encore aucun personal record.</p>
+{% endif %}
+{% endblock %}
