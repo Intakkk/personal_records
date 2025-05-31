@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Évolution de {{ object.title }}{% endblock %}
+
+{% block content %}
+<h2>{{ object.title }} – évolution</h2>
+
+<canvas id="prChart" width="400" height="200"></canvas>
+
+<a href="{% url 'pr-list' %}" class="btn btn-secondary mt-3">← Retour</a>
+
+{% comment %} Ajoute ceci pour passer les données en JSON {% endcomment %}
+<script id="labels-data" type="application/json">
+    {{ records|values_list:"date"|json_script:"labels-data" }}
+</script>
+<script id="values-data" type="application/json">
+    {{ records|values_list:"value"|json_script:"values-data" }}
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const labels = JSON.parse(document.getElementById('labels-data').textContent);
+    const values = JSON.parse(document.getElementById('values-data').textContent);
+
+    const ctx = document.getElementById('prChart').getContext('2d');
+    const chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: '{{ object.title }} ({{ object.unit }} )',
+                data: values,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: {
+                    title: { display: true, text: 'Date' }
+                },
+                y: {
+                    title: { display: true, text: '{{ object.unit }}' }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

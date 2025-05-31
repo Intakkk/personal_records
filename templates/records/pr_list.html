@@ -7,11 +7,22 @@
 
 <a href="{% url 'pr-add' %}" class="btn btn-success mb-3">➕ Ajouter un PR</a>
 
+<!-- Formulaire de filtre -->
+<form method="get" class="mb-3 d-flex align-items-center">
+    <select name="exercise" class="form-select me-2" onchange="this.form.submit()">
+        <option value="">Tous les exercices</option>
+        {% for ex in exercises %}
+            <option value="{{ ex }}" {% if ex == selected_exercise %}selected{% endif %}>{{ ex }}</option>
+        {% endfor %}
+    </select>
+    <noscript><button type="submit" class="btn btn-primary">Filtrer</button></noscript>
+</form>
+
 {% if records %}
     <table class="table table-bordered">
         <thead>
             <tr>
-                <th>Exercice</th>
+                <th href="?sort=exercise&exercise={{ selected_exercise }}">Exercice</th>
                 <th>Valeur</th>
                 <th>Date</th>
                 <th></th>
@@ -20,7 +31,7 @@
         <tbody>
             {% for record in records %}
                 <tr>
-                    <td>{{ record.title }}</td>
+                    <td><a href="{% url 'pr-detail' record.title %}">{{ record.title }}</a></td>
                     <td>{{ record.value }} {{ record.unit }}</td>
                     <td>{{ record.date }}</td>
                     <td>
