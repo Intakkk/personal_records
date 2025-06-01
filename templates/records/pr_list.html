@@ -23,9 +23,11 @@
         <thead>
             <tr>
                 <th href="?sort=exercise&exercise={{ selected_exercise }}">Exercice</th>
-                <th>Valeur</th>
+                <th>Value</th>
                 <th>Date</th>
-                <th></th>
+                <th>Bodyweight</th>
+                <th>Bodyweight %</th>
+                <th>Delete</th>
             </tr>
         </thead>
         <tbody>
@@ -34,6 +36,12 @@
                     <td><a href="{% url 'pr-detail' record.title %}">{{ record.title }}</a></td>
                     <td>{{ record.value }} {{ record.unit }}</td>
                     <td>{{ record.date }}</td>
+                    <td>{{ record.weight }}</td>
+                    <td>{% if record.bodyweight %}
+                            {{ record.bodyweight|floatformat:2 }}
+                        {% else %}
+                            -
+                        {% endif %}</td>
                     <td>
                         <a href="{% url 'pr-delete' record.pk %}" class="btn btn-sm btn-danger">🗑️ Supprimer</a>
                     </td>

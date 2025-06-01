@@ -4,6 +4,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from .models import PersonalRecord
 from django.contrib.auth.forms import UserCreationForm
+from .forms import PersonalRecordForm
 
 # Create your views here.
 
@@ -44,7 +45,7 @@ class PRListView(LoginRequiredMixin, ListView):
 
 class PRCreateView(LoginRequiredMixin, CreateView):
     model = PersonalRecord
-    fields = ["title", "value", "unit"]
+    form_class = PersonalRecordForm
     template_name = "records/pr_form.html"
     success_url = reverse_lazy("pr-list")
 
