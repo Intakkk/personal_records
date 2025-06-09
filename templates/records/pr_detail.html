@@ -2,19 +2,12 @@
 {% block title %}Évolution de {{ object.title }}{% endblock %}
 
 {% block content %}
-<h2>{{ object.title }} – évolution</h2>
+<h2>{{ object.title }} – Evolution</h2>
 
 <canvas id="prChart" width="400" height="200"></canvas>
 
-<a href="{% url 'pr-list' %}" class="btn btn-secondary mt-3">← Retour</a>
-
-{% comment %} Ajoute ceci pour passer les données en JSON {% endcomment %}
-<script id="labels-data" type="application/json">
-    {{ records|values_list:"date"|json_script:"labels-data" }}
-</script>
-<script id="values-data" type="application/json">
-    {{ records|values_list:"value"|json_script:"values-data" }}
-</script>
+{{ dates|json_script:"labels-data" }}
+{{ values|json_script:"values-data" }}
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
@@ -22,28 +15,87 @@
     const values = JSON.parse(document.getElementById('values-data').textContent);
 
     const ctx = document.getElementById('prChart').getContext('2d');
+
+    // Dégradé pour la courbe
+    const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+    gradient.addColorStop(0, 'rgba(75,192,192,0.4)');
+    gradient.addColorStop(1, 'rgba(75,192,192,0.1)');
+
     const chart = new Chart(ctx, {
         type: 'line',
         data: {
             labels: labels,
             datasets: [{
-                label: '{{ object.title }} ({{ object.unit }} )',
+                label: '{{ object.title }} ({{ object.unit }})',
                 data: values,
+                fill: true,
+                backgroundColor: gradient,
                 borderColor: 'rgb(75, 192, 192)',
-                tension: 0.1
+                pointBackgroundColor: 'rgb(75, 192, 192)',
+                pointBorderColor: '#fff',
+                pointRadius: 5,
+                pointHoverRadius: 7,
+                tension: 0.2
             }]
         },
         options: {
             responsive: true,
+            plugins: {
+                legend: {
+                    display: true,
+                    labels: {
+                        font: { size: 14 }
+                    }
+                },
+                tooltip: {
+                    enabled: true,
+                    callbacks: {
+                        label: function(context) {
+                            return context.parsed.y + ' {{ object.unit }}';
+                        }
+                    }
+                }
+            },
             scales: {
                 x: {
-                    title: { display: true, text: 'Date' }
+                    title: { display: true, text: 'Date', font: { size: 14 } },
+                    grid: { color: 'rgba(0,0,0,0.05)' }
                 },
                 y: {
-                    title: { display: true, text: '{{ object.unit }}' }
+                    title: { display: true, text: '{{ object.unit }}', font: { size: 14 } },
+                    grid: { color: 'rgba(0,0,0,0.05)' },
+                    beginAtZero: true
                 }
             }
         }
     });
 </script>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Value</th>
+            <th>Date</th>
+            <th>Bodyweight</th>
+            <th>Bodyweight %</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for record in records %}
+            <tr>
+                <td>{{ record.value }} {{ record.unit }}</td>
+                <td>{{ record.date }}</td>
+                <td>{{ record.weight }}</td>
+                <td>{% if record.bodyweight %}
+                        {{ record.bodyweight|floatformat:2 }}
+                    {% else %}
+                        -
+                    {% endif %}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<a href="{% url 'pr-list' %}" class="btn btn-secondary mt-3">← Retour</a><br><br>
+
 {% endblock %}

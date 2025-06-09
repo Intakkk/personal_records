@@ -64,13 +64,19 @@ class PRDeleteView(LoginRequiredMixin, DeleteView):
 class PRDetailView(LoginRequiredMixin, DetailView):
     model = PersonalRecord
     template_name = "records/pr_detail.html"
+    context_object_name = "object"
 
     def get_queryset(self):
-        return PersonalRecord.objects.filter(user=self.request.user, title=self.kwargs['title']).order_by("date")
+        return PersonalRecord.objects.filter(user=self.request.user)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        records = self.get_queryset()
-        context["records"] = records
+        qs = PersonalRecord.objects.filter(
+            user=self.request.user,
+            title=self.object.title
+        ).order_by("date")
+        context["dates"] = [str(pr.date) for pr in qs]
+        context["values"] = [pr.value for pr in qs]
+        context["records"] = qs
         return context
     

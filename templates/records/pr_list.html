@@ -22,7 +22,7 @@
     <table class="table table-bordered">
         <thead>
             <tr>
-                <th href="?sort=exercise&exercise={{ selected_exercise }}">Exercice</th>
+                <th>Exercice</th>
                 <th>Value</th>
                 <th>Date</th>
                 <th>Bodyweight</th>
@@ -33,7 +33,7 @@
         <tbody>
             {% for record in records %}
                 <tr>
-                    <td><a href="{% url 'pr-detail' record.title %}">{{ record.title }}</a></td>
+                    <td><a href="{% url 'pr-detail' record.pk %}">{{ record.title }}</a></td>
                     <td>{{ record.value }} {{ record.unit }}</td>
                     <td>{{ record.date }}</td>
                     <td>{{ record.weight }}</td>
